@@ -40,7 +40,7 @@ public class Chunk {
 		ArrayList<Vec4> hitboxes = new ArrayList<Vec4>();
 		for (Tile[] row : tiles) {
 			for (Tile tile : row) {
-				if (tile != null && !tile.equals(Tile.Air))
+				if (tile != null && tile.isSolid())
 					hitboxes.add(new Vec4(x, y, Tile.width, Tile.height));
 				x += Tile.width;
 			}

@@ -4,8 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 public abstract class Renderable {
 
-	private Texture texture;
-	private double w, h;
+	protected Texture texture;
+	protected double w, h;
 
 	public Renderable(Texture texture, double w, double h) {
 		this.texture = texture;

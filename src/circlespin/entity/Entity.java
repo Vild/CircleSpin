@@ -18,4 +18,8 @@ public abstract class Entity extends Renderable {
 	public AABB GetPos() {
 		return pos;
 	}
+
+	public boolean OnHit(Entity entity) {
+		return false;
+	}
 }

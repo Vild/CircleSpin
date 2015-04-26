@@ -8,7 +8,10 @@ import java.util.List;
 
 import circlespin.Engine;
 import circlespin.data.Vec4;
+import circlespin.entity.Document;
+import circlespin.entity.Entity;
 import circlespin.entity.Man;
+import circlespin.entity.QuitNode;
 import circlespin.physics.AABB;
 import circlespin.tile.Tile;
 
@@ -20,12 +23,14 @@ public class World {
 
 	Chunk[][] chunks;
 	AABB[] hitboxes;
+	ArrayList<Entity> entities;
 
 	Man man;
 
 	public World(File file, double x, double y) {
 		this.x = x;
 		this.y = y;
+		this.entities = new ArrayList<>();
 		processData(loadFile(file));
 	}
 
@@ -54,7 +59,8 @@ public class World {
 			int y = 0;
 			for (String row : rows) {
 				for (int j = 0; j < row.length(); j++) {
-					processTile(chunk, row.charAt(j), j, y);
+					processTile(chunk, row.charAt(j), j, y, i % width, i
+							/ width);
 
 				}
 				y++;
@@ -65,13 +71,30 @@ public class World {
 
 	}
 
-	private void processTile(Chunk chunk, char tile, int x, int y) {
+	private void processTile(Chunk chunk, char tile, int x, int y, int wx,
+			int wy) {
+		double realX = (wx * chunkWidth + x) * Tile.width + this.x;
+		double realY = (wy * chunkHeight + y) * Tile.height + this.y;
 		switch (tile) {
 		case '#':
 			chunk.Set(x, y, Tile.Stone);
 			break;
+		case '$':
+			chunk.Set(x, y, Tile.BlueStone);
+			break;
+		case 'E':
+			chunk.Set(x, y, Tile.Exit);
+			break;
 		case 'P':
-			man = new Man(x * Tile.width + this.x, y * Tile.height + this.y);
+			man = new Man(realX, realY);
+			chunk.Set(x, y, Tile.Air);
+			break;
+		case 'D':
+			entities.add(new Document(realX, realY));
+			chunk.Set(x, y, Tile.Air);
+			break;
+		case 'X':
+			entities.add(new QuitNode(realX, realY));
 			chunk.Set(x, y, Tile.Air);
 			break;
 		default:
@@ -100,6 +123,23 @@ public class World {
 		}
 	}
 
+	public void Update(double delta) {
+		man.Update(delta);
+		for (Entity entity : entities)
+			entity.Update(delta);
+
+		ArrayList<Entity> toRemove = new ArrayList<Entity>();
+
+		for (Entity entity : entities)
+			if (entity.GetPos().Hit(man.GetPos()))
+				if (entity.OnHit(man))
+					toRemove.add(entity);
+
+		for (Entity entity : toRemove)
+			entities.remove(entity);
+
+	}
+
 	public void Render() {
 		double px = man.GetPos().getX() - Engine.WIDTH / 2 + 32;
 		double py = man.GetPos().getY() - Engine.HEIGHT / 2 + 32;
@@ -107,8 +147,12 @@ public class World {
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++)
 				chunks[y][x].Render(x * chunkWidth * Tile.width + this.x - px,
-						y * chunkHeight * Tile.height + this.y
-								- py);
+						y * chunkHeight * Tile.height + this.y - py);
+		for (Entity entity : entities)
+			entity.Render(x * chunkWidth * Tile.width + this.x - px
+					+ entity.GetPos().getX(), y * chunkHeight * Tile.height
+					+ this.y - py + entity.GetPos().getY());
+
 		man.Render(Engine.WIDTH / 2 - 64 / 2, Engine.HEIGHT / 2 - 64 / 2);
 	}
 

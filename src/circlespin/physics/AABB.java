@@ -89,7 +89,11 @@ public class AABB {
 		}
 	}
 
-	private boolean Hit(Vec4 b) {
+	public boolean Hit(AABB b) {
+		return CheckCollision(Rect(), b.Rect());
+	}
+	
+	public boolean Hit(Vec4 b) {
 		return CheckCollision(Rect(), b);
 	}
 

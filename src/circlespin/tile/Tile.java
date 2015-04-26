@@ -9,6 +9,10 @@ public class Tile {
 
 	public static Tile Air = new Tile();
 	public static Tile Stone = new Tile(new Texture("assets/tiles/stone.png"));
+	public static Tile BlueStone = new Tile(new Texture(
+			"assets/tiles/stone2.png"));
+	public static final Tile Exit = new Tile(new Texture(
+			"assets/tiles/exit.png"), false);;
 
 	private static int ID_COUNT = 0;
 
@@ -16,23 +20,33 @@ public class Tile {
 	Texture texture;
 	public static final int width = 64;
 	public static final int height = 64;
+
 	boolean air;
+	boolean solid;
 
 	public Tile() {
 		this.id = ID_COUNT++;
 		this.air = true;
+		this.solid = false;
 	}
 
 	public Tile(Texture texture) {
 		this.id = ID_COUNT++;
 		this.texture = texture;
-		this.air = false;
+		this.solid = true;
+	}
+	
+	public Tile(Texture texture, boolean solid) {
+		this.id = ID_COUNT++;
+		this.texture = texture;
+		this.solid = solid;
 	}
 
 	public void Render(double x, double y) {
 		if (air)
 			return;
 		texture.bind();
+
 		GL11.glBegin(GL11.GL_QUADS);
 
 		GL11.glTexCoord2d(0, 0);
@@ -62,7 +76,7 @@ public class Tile {
 	}
 
 	public boolean isSolid() {
-		return !air;
+		return solid;
 	}
 
 }
