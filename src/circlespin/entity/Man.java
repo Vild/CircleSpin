@@ -15,7 +15,7 @@ public class Man extends Entity {
   private boolean lookLeft = true;
 
   public Man(double x, double y) {
-    super(new Texture("assets/man.png"), x, y, 64 - 1, 64 - 1 /*
+    super(new Texture("assets/man.png"), x, y, 64 - 1, 64 - 8 /*
                                                                      * HAX TO
 																	 * MAEK IT
 																	 * WURK
@@ -39,20 +39,27 @@ public class Man extends Entity {
 
     dvy += gravity;
 
-    dvx -= pos.getVx() * delta * 1.15;
-    if (Keyboard.isKeyDown(Keyboard.KEY_UP) && pos.HitGround())
+
+    boolean xchanged = false;
+
+    if ((Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_SPACE)) && pos.HitGround())
       dvy -= speed * 2;
-    if (Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+    if (Keyboard.isKeyDown(Keyboard.KEY_S))
       dvy += delta * speed;
 
-    if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+    if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
       dvx -= delta * speed;
       lookLeft = true;
+      xchanged = true;
     }
-    if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+    if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
       dvx += delta * speed;
       lookLeft = false;
+      xchanged = true;
     }
+
+    if (!xchanged)
+      dvx -= pos.getVx() * delta * 5;
 
     GameState gameState = (GameState) Engine.Get().GetState();
     pos.Update(delta, dvx, dvy, gameState.GetWorld().GetHitboxes(),

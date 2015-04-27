@@ -8,6 +8,7 @@ import circlespin.entity.Man;
 import circlespin.entity.QuitNode;
 import circlespin.physics.AABB;
 import circlespin.tile.Tile;
+import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,8 +25,6 @@ public class World {
   AABB[] hitboxes;
   ArrayList<Entity> entities;
 
-  Man man;
-
   public World(File file, double x, double y) {
     this.x = x;
     this.y = y;
@@ -33,6 +32,29 @@ public class World {
     processData(loadFile(file));
   }
 
+
+  /**
+   * Loads the world for a file
+   * <p>
+   * ABI:
+   * WorldWidth WorldHeight
+   * ChunkWidth ChunkHeight
+   * ;; <--- Splits header from data
+   * XXXX
+   * XXXX
+   * XXXX
+   * XXXX
+   * :: <--- Splits each chunk from eachother, chunk sorting is from left->right, top->bottom
+   * XXXX
+   * XXXX
+   * XXXX
+   * XXXX
+   * <p>
+   * Please note last chunk will be empty so the file does not need to contain it, because it
+   * will skip it anyway.
+   *
+   * @param loadFile
+   */
   private void processData(String loadFile) {
     String[] header = loadFile.split("\n;;\n");
     String[] headerLine = header[0].split("\n");
@@ -48,8 +70,8 @@ public class World {
 
     String[] chunksData = header[1].split("\n::\n");
 
-    for (int i = 0; i < chunksData.length; i++) {
-      Chunk chunk = new Chunk(chunkWidth, chunkHeight);
+    for (int i = 0; i < width * height - 1; i++) {
+      Chunk chunk = new Chunk(this, chunkWidth, chunkHeight);
 
       String data = chunksData[i];
 
@@ -57,17 +79,15 @@ public class World {
 
       int y = 0;
       for (String row : rows) {
-        for (int j = 0; j < row.length(); j++) {
+        for (int j = 0; j < row.length(); j++)
           processTile(chunk, row.charAt(j), j, y, i % width, i
               / width);
-
-        }
         y++;
       }
 
       chunks[i / width][i % width] = chunk;
     }
-
+    chunks[height - 1][width - 1] = new BlankChunk(this, chunkWidth, chunkHeight);
   }
 
   private void processTile(Chunk chunk, char tile, int x, int y, int wx,
@@ -85,7 +105,7 @@ public class World {
         chunk.Set(x, y, Tile.Exit);
         break;
       case 'P':
-        man = new Man(realX, realY);
+        entities.add(new Man(realX, realY));
         chunk.Set(x, y, Tile.Air);
         break;
       case 'D':
@@ -123,7 +143,7 @@ public class World {
   }
 
   public void Update(double delta) {
-    man.Update(delta);
+    final Man man = Get(Man.class);
     for (Entity entity : entities)
       entity.Update(delta);
 
@@ -136,23 +156,27 @@ public class World {
 
     for (Entity entity : toRemove)
       entities.remove(entity);
-
   }
 
   public void Render() {
-    double px = man.GetPos().getX() - Engine.WIDTH / 2 + 32;
-    double py = man.GetPos().getY() - Engine.HEIGHT / 2 + 32;
+    final Man man = Get(Man.class);
+    final double px = man.GetPos().getX() - Engine.GetWidth() / 2 + 32;
+    final double py = man.GetPos().getY() - Engine.GetHeight() / 2 + 32;
 
     for (int y = 0; y < height; y++)
       for (int x = 0; x < width; x++)
         chunks[y][x].Render(x * chunkWidth * Tile.width + this.x - px,
             y * chunkHeight * Tile.height + this.y - py);
-    for (Entity entity : entities)
-      entity.Render(x * chunkWidth * Tile.width + this.x - px
-          + entity.GetPos().getX(), y * chunkHeight * Tile.height
-          + this.y - py + entity.GetPos().getY());
 
-    man.Render(Engine.WIDTH / 2 - 64 / 2, Engine.HEIGHT / 2 - 64 / 2);
+    for (Entity entity : entities)
+      if (entity instanceof Man)
+        entity.Render(Engine.GetWidth() / 2 - 64 / 2, Engine.GetHeight() / 2 - 64 / 2);
+      else
+        entity.Render(x * chunkWidth * Tile.width + this.x - px
+            + entity.GetPos().getX(), y * chunkHeight * Tile.height
+            + this.y - py + entity.GetPos().getY());
+
+
   }
 
   public double GetX() {
@@ -187,7 +211,7 @@ public class World {
     return chunkHeight;
   }
 
-  public Chunk[][] getChunks() {
+  public Chunk[][] GetChunks() {
     return chunks;
   }
 
@@ -201,8 +225,13 @@ public class World {
     return hitboxes;
   }
 
-  public Man GetMan() {
-    return man;
+  public <T> T Get(Class clazz) {
+    final T[] ret = (T[]) new Object[]{null};
+    entities.forEach((entity) -> {
+      if (entity.getClass().equals(clazz))
+        ret[0] = (T)entity;
+    });
+    return ret[0];
   }
 
 }
