@@ -58,7 +58,9 @@ public class Man extends Entity {
       xchanged = true;
     }
 
-    if (!xchanged)
+    if (!xchanged ||
+        (lookLeft && pos.getVx() > 0) ||
+        (!lookLeft && pos.getVx() < 0))
       dvx -= pos.getVx() * delta * 5;
 
     GameState gameState = (GameState) Engine.Get().GetState();
@@ -69,7 +71,6 @@ public class Man extends Entity {
   @Override
   public void Render(double x, double y) {
     textures.get((int) (Math.floor(animationCount * 8) % 4)).bind();
-    // texture.bind();
     GL11.glBegin(GL11.GL_QUADS);
 
     if (lookLeft)

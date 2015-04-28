@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CircleSpin:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CircleSpin_jar</output-path>
+    <root id="archive" name="CircleSpin.jar">
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl_util.jar" path-in-jar="/" />
+      <element id="module-output" name="CircleSpin" />
+    </root>
+  </artifact>
+</component>

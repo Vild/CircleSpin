@@ -11,7 +11,7 @@ import java.io.File;
 
 public class GameState extends State {
   World world;
-  Tile background = new Tile(new Texture("assets/background.png"));
+  Tile background = new Tile(new Texture("assets/back.png"));
 
   @Override
   public void OnLoad() {
