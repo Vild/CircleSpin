@@ -9,24 +9,24 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-public class Man extends Entity {
+public class Player extends Entity {
   private ArrayList<Texture> textures = new ArrayList<Texture>();
   private double animationCount = 0;
   private boolean lookLeft = true;
 
-  public Man(double x, double y) {
-    super(new Texture("assets/man.png"), x, y, 64 - 1, 64 - 8 /*
+  public Player(double x, double y) {
+    super(new Texture("assets/player/man0.png"), x, y, 64 - 1, 64 - 8 /*
                                                                      * HAX TO
 																	 * MAEK IT
 																	 * WURK
 																	 */);
 
     textures.add(texture);
-    textures.add(new Texture("assets/man2.png"));
-    textures.add(new Texture("assets/man3.png"));
-    textures.add(new Texture("assets/man4.png"));
-    textures.add(new Texture("assets/man5.png"));
-    textures.add(new Texture("assets/man6.png"));
+    textures.add(new Texture("assets/player/man2.png"));
+    textures.add(new Texture("assets/player/man3.png"));
+    textures.add(new Texture("assets/player/man4.png"));
+    textures.add(new Texture("assets/player/man5.png"));
+    textures.add(new Texture("assets/player/man6.png"));
   }
 
   @Override

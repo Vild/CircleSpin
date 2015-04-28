@@ -27,7 +27,7 @@ public class Document extends Entity {
 
   @Override
   public boolean OnHit(Entity entity) {
-    return (entity instanceof Man);
+    return (entity instanceof Player);
   }
 
 }

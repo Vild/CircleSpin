@@ -2,7 +2,7 @@ package circlespin.world;
 
 import circlespin.Engine;
 import circlespin.data.Vec4;
-import circlespin.entity.Man;
+import circlespin.entity.Player;
 import circlespin.tile.Tile;
 import org.lwjgl.opengl.GL11;
 
@@ -26,17 +26,17 @@ public class Chunk {
   }
 
   public void Render(double x, double y) {
-    final Man man = world.Get(Man.class);
-    final double px = man.GetPos().getX() - Engine.GetWidth() / 2 + 32;
-    final double py = man.GetPos().getY() - Engine.GetHeight() / 2 + 32;
+    final Player player = world.Get(Player.class);
+    final double px = player.GetPos().getX() - Engine.GetWidth() / 2 + 32;
+    final double py = player.GetPos().getY() - Engine.GetHeight() / 2 + 32;
     for (Tile[] row : tiles) {
       for (Tile tile : row) {
         if (tile != null && !tile.equals(Tile.Air)) {
           GL11.glColor3d(0.1, 0.1, 0.1);
           tile.Render(x, y);
           double dist = Math.sqrt(
-              Math.pow(x + px - man.GetPos().getX() + 32, 2) +
-                  Math.pow(y + py - man.GetPos().getY() + 32, 2));
+              Math.pow(x + px - player.GetPos().getX() + 32, 2) +
+                  Math.pow(y + py - player.GetPos().getY() + 32, 2));
           double color = 64*16 - Math.max(Math.min(dist, 64*16), 1);
           color /= 64*16;
           GL11.glColor3d(color, color, color);

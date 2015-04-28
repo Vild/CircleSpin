@@ -4,11 +4,10 @@ import circlespin.Engine;
 import circlespin.data.Vec4;
 import circlespin.entity.Document;
 import circlespin.entity.Entity;
-import circlespin.entity.Man;
+import circlespin.entity.Player;
 import circlespin.entity.QuitNode;
 import circlespin.physics.AABB;
 import circlespin.tile.Tile;
-import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -105,7 +104,7 @@ public class World {
         chunk.Set(x, y, Tile.Exit);
         break;
       case 'P':
-        entities.add(new Man(realX, realY));
+        entities.add(new Player(realX, realY));
         chunk.Set(x, y, Tile.Air);
         break;
       case 'D':
@@ -143,15 +142,15 @@ public class World {
   }
 
   public void Update(double delta) {
-    final Man man = Get(Man.class);
+    final Player player = Get(Player.class);
     for (Entity entity : entities)
       entity.Update(delta);
 
     ArrayList<Entity> toRemove = new ArrayList<Entity>();
 
     for (Entity entity : entities)
-      if (entity.GetPos().Hit(man.GetPos()))
-        if (entity.OnHit(man))
+      if (entity.GetPos().Hit(player.GetPos()))
+        if (entity.OnHit(player))
           toRemove.add(entity);
 
     for (Entity entity : toRemove)
@@ -159,9 +158,9 @@ public class World {
   }
 
   public void Render() {
-    final Man man = Get(Man.class);
-    final double px = man.GetPos().getX() - Engine.GetWidth() / 2 + 32;
-    final double py = man.GetPos().getY() - Engine.GetHeight() / 2 + 32;
+    final Player player = Get(Player.class);
+    final double px = player.GetPos().getX() - Engine.GetWidth() / 2 + 32;
+    final double py = player.GetPos().getY() - Engine.GetHeight() / 2 + 32;
 
     for (int y = 0; y < height; y++)
       for (int x = 0; x < width; x++)
@@ -169,7 +168,7 @@ public class World {
             y * chunkHeight * Tile.height + this.y - py);
 
     for (Entity entity : entities)
-      if (entity instanceof Man)
+      if (entity instanceof Player)
         entity.Render(Engine.GetWidth() / 2 - 64 / 2, Engine.GetHeight() / 2 - 64 / 2);
       else
         entity.Render(x * chunkWidth * Tile.width + this.x - px
