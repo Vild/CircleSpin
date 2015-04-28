@@ -8,6 +8,7 @@ import circlespin.entity.Player;
 import circlespin.entity.QuitNode;
 import circlespin.physics.AABB;
 import circlespin.tile.Tile;
+import org.lwjgl.input.Keyboard;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -228,9 +229,51 @@ public class World {
     final T[] ret = (T[]) new Object[]{null};
     entities.forEach((entity) -> {
       if (entity.getClass().equals(clazz))
-        ret[0] = (T)entity;
+        ret[0] = (T) entity;
     });
     return ret[0];
   }
 
+  public void OnKey(int key, boolean isDown) {
+    if (isDown) {
+      int x = 0, y = 0;
+      loops: for (y = 0; y < chunks.length; y++)
+        for (x = 0; x < chunks[y].length; x++)
+          if (chunks[y][x] instanceof BlankChunk)
+            break loops;
+
+      if (y >= chunks.length) // Failed to find it
+        return;
+
+      if (key == Keyboard.KEY_UP) {
+        if (y >= chunks.length - 1)
+          return;
+
+        Chunk blank = chunks[y][x];
+        chunks[y][x] = chunks[y + 1][x];
+        chunks[y + 1][x] = blank;
+      } else if (key == Keyboard.KEY_DOWN) {
+        if (y == 0)
+          return;
+
+        Chunk blank = chunks[y][x];
+        chunks[y][x] = chunks[y - 1][x];
+        chunks[y - 1][x] = blank;
+      } else if (key == Keyboard.KEY_LEFT) {
+        if (x >= chunks[0].length - 1)
+          return;
+
+        Chunk blank = chunks[y][x];
+        chunks[y][x] = chunks[y][x + 1];
+        chunks[y][x + 1] = blank;
+      } else if (key == Keyboard.KEY_RIGHT) {
+        if (x == 0)
+          return;
+
+        Chunk blank = chunks[y][x];
+        chunks[y][x] = chunks[y][x - 1];
+        chunks[y][x - 1] = blank;
+      }
+    }
+  }
 }

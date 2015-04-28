@@ -39,7 +39,6 @@ public class Player extends Entity {
 
     dvy += gravity;
 
-
     boolean xchanged = false;
 
     if ((Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_SPACE)) && pos.HitGround())

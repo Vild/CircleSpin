@@ -5,6 +5,7 @@ import circlespin.entity.Player;
 import circlespin.graphic.Texture;
 import circlespin.tile.Tile;
 import circlespin.world.World;
+import org.lwjgl.input.Keyboard;
 
 import java.io.File;
 
@@ -19,6 +20,9 @@ public class GameState extends State {
 
   @Override
   public void Update(double delta) {
+    while (Keyboard.next())
+      world.OnKey(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+
     world.Update(delta);
   }
 

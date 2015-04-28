@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Chunk {
 
+  public static final double LIGHTNING_MAX_DIST = Tile.width * 16 * 1.5;
   protected World world;
   protected int width, height;
   protected Tile[][] tiles;
@@ -37,8 +38,8 @@ public class Chunk {
           double dist = Math.sqrt(
               Math.pow(x + px - player.GetPos().getX() + 32, 2) +
                   Math.pow(y + py - player.GetPos().getY() + 32, 2));
-          double color = 64*16 - Math.max(Math.min(dist, 64*16), 1);
-          color /= 64*16;
+          double color = LIGHTNING_MAX_DIST - Math.max(Math.min(dist, LIGHTNING_MAX_DIST), 1);
+          color /= LIGHTNING_MAX_DIST;
           GL11.glColor3d(color, color, color);
           tile.Render(x, y);
           GL11.glColor3d(1, 1, 1);

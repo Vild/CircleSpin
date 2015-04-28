@@ -61,7 +61,6 @@ public class Engine {
       if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
         break;
 
-
       if (Keyboard.isKeyDown(Keyboard.KEY_COMMA)) {
         zoom += 1 * delta;
         zoomChanged = true;
